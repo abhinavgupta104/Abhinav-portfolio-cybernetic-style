@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Cyber-Cinematic Dark Theme */
+    --background: 0 0% 2%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 185 100% 50%;
+    --primary-foreground: 0 0% 2%;
+
+    --secondary: 289 100% 50%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 289 100% 50%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 185 100% 50%;
+
+    --radius: 0.5rem;
+
+    /* Custom Cyber Colors */
+    --neon-cyan: 185 100% 50%;
+    --neon-purple: 289 100% 50%;
+    --neon-green: 151 100% 50%;
+    --deep-black: 0 0% 2%;
+    --grid-color: 0 0% 15%;
+
+    /* Gradients */
+    --gradient-cyber: linear-gradient(135deg, hsl(185 100% 50%) 0%, hsl(289 100% 50%) 100%);
+    --gradient-glow-cyan: 0 0 30px hsl(185 100% 50% / 0.5);
+    --gradient-glow-purple: 0 0 30px hsl(289 100% 50% / 0.5);
+    --gradient-glow-green: 0 0 30px hsl(151 100% 50% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Syne', sans-serif;
+  }
+
+  ::selection {
+    background: hsl(var(--neon-cyan) / 0.3);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  /* Typography */
+  .font-display {
+    font-family: 'Syne', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Cyber Grid Background */
+  .cyber-grid {
+    background-image: 
+      linear-gradient(hsl(var(--grid-color) / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--grid-color) / 0.3) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Neon Glow Effects */
+  .glow-cyan {
+    box-shadow: var(--gradient-glow-cyan);
+  }
+
+  .glow-purple {
+    box-shadow: var(--gradient-glow-purple);
+  }
+
+  .glow-green {
+    box-shadow: var(--gradient-glow-green);
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 20px hsl(var(--neon-cyan) / 0.8), 0 0 40px hsl(var(--neon-cyan) / 0.4);
+  }
+
+  .text-glow-purple {
+    text-shadow: 0 0 20px hsl(var(--neon-purple) / 0.8), 0 0 40px hsl(var(--neon-purple) / 0.4);
+  }
+
+  /* Cyber Border with Glitch */
+  .cyber-border {
+    position: relative;
+    border: 1px solid hsl(var(--neon-cyan) / 0.5);
+  }
+
+  .cyber-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 1px solid hsl(var(--neon-purple) / 0.3);
+    animation: glitch-border 3s infinite;
+  }
+
+  @keyframes glitch-border {
+    0%, 90%, 100% {
+      transform: translate(0);
+      opacity: 1;
+    }
+    92% {
+      transform: translate(2px, -1px);
+      opacity: 0.8;
+    }
+    94% {
+      transform: translate(-2px, 1px);
+      opacity: 0.6;
+    }
+    96% {
+      transform: translate(1px, 2px);
+      opacity: 0.8;
+    }
+    98% {
+      transform: translate(-1px, -2px);
+      opacity: 1;
+    }
+  }
+
+  /* Gradient Mask for Hero Image */
+  .hero-image-mask {
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  }
+
+  /* Terminal Styles */
+  .terminal-container {
+    background: hsl(var(--deep-black));
+    border: 1px solid hsl(var(--neon-green) / 0.3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .terminal-cursor {
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Magnetic Button Base */
+  .magnetic-button {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .magnetic-button::before {
+    content: '';
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, currentColor 0%, transparent 70%);
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .magnetic-button:hover::before {
+    opacity: 0.15;
+  }
+
+  /* Project Card Tilt */
+  .project-card {
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+
+  .project-card:hover {
+    transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) scale(1.02);
+  }
+
+  /* Spotlight Cursor Effect Container */
+  .spotlight-container {
+    position: relative;
+  }
+
+  .spotlight-container::before {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, hsl(var(--neon-cyan) / 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    transition: opacity 0.3s;
+  }
+}
+
+@layer utilities {
+  .text-gradient-cyber {
+    background: linear-gradient(135deg, hsl(var(--neon-cyan)) 0%, hsl(var(--neon-purple)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-cyber-dark {
+    background-color: hsl(var(--deep-black));
+  }
+
+  .border-neon-cyan {
+    border-color: hsl(var(--neon-cyan));
+  }
+
+  .border-neon-purple {
+    border-color: hsl(var(--neon-purple));
+  }
+
+  .border-neon-green {
+    border-color: hsl(var(--neon-green));
+  }
+
+  .text-neon-cyan {
+    color: hsl(var(--neon-cyan));
+  }
+
+  .text-neon-purple {
+    color: hsl(var(--neon-purple));
+  }
+
+  .text-neon-green {
+    color: hsl(var(--neon-green));
+  }
+
+  .bg-neon-cyan {
+    background-color: hsl(var(--neon-cyan));
+  }
+
+  .bg-neon-purple {
+    background-color: hsl(var(--neon-purple));
+  }
+
+  .bg-neon-green {
+    background-color: hsl(var(--neon-green));
+  }
+}
