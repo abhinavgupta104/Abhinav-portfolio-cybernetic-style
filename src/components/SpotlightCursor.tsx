@@ -136,7 +136,10 @@ const SpotlightCursor = () => {
 
       // Cleanup particles after animation
       setTimeout(() => {
-        setParticles(prev => prev.filter(p => p.id < now));
+        setParticles(prev => {
+          const expirationThreshold = Date.now() - 1000;
+          return prev.filter(p => p.id > expirationThreshold);
+        });
       }, 1000);
     };
 

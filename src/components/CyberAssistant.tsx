@@ -420,7 +420,11 @@ const CyberAssistant = () => {
         }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-8 left-
+        className="fixed bottom-8 left-4 md:left-8 z-50 w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-neon-cyan/50 text-neon-cyan shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center justify-center group"
+      >
+        <Bot className="w-6 h-6 group-hover:animate-pulse" />
+        <span className="absolute -top-2 -right-2 w-4 h-4 bg-neon-green rounded-full animate-pulse border-2 border-black" />
+      </motion.button>
     </>
   );
 };

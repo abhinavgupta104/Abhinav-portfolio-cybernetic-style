@@ -53,21 +53,24 @@ const TechIcon = ({ name, delay = 0 }: TechIconProps) => {
 
   if (!icon) return null;
 
-  const colorClasses: Record<string, { bg: string; glow: string; border: string }> = {
+  const colorClasses: Record<string, { bg: string; glow: string; border: string; text: string }> = {
     'neon-cyan': {
       bg: 'bg-neon-cyan/10',
       glow: 'shadow-[0_0_20px_hsl(var(--neon-cyan)/0.4)]',
       border: 'border-neon-cyan/30',
+      text: 'text-neon-cyan',
     },
     'neon-purple': {
       bg: 'bg-neon-purple/10',
       glow: 'shadow-[0_0_20px_hsl(var(--neon-purple)/0.4)]',
       border: 'border-neon-purple/30',
+      text: 'text-neon-purple',
     },
     'neon-green': {
       bg: 'bg-neon-green/10',
       glow: 'shadow-[0_0_20px_hsl(var(--neon-green)/0.4)]',
       border: 'border-neon-green/30',
+      text: 'text-neon-green',
     },
   };
 
@@ -113,7 +116,7 @@ const TechIcon = ({ name, delay = 0 }: TechIconProps) => {
       >
         <svg
           viewBox="0 0 24 24"
-          className={`w-5 h-5 fill-current text-${icon.color}`}
+          className={`w-5 h-5 fill-current ${colors.text}`}
         >
           <path d={icon.path} />
         </svg>
