@@ -16,7 +16,14 @@ interface KnowledgeEntry {
   topic?: string;
 }
 
+type UserIntent = 'recruiter' | 'student' | 'judge' | 'curious';
+
 const KNOWLEDGE_BASE: KnowledgeEntry[] = [
+  {
+    keywords: ['explain project', 'recruiter', '20 seconds', 'elevator pitch', 'summary', 'pitch', 'quick run'],
+    response: ">> ELEVATOR_PITCH_LOADED\n\nProject: XShootSMS\nStack: Next.js, Python, AWS\nImpact: Engineered B2B SaaS for high-throughput SMS. Optimized delivery latency by 30%. Scalable architecture handling peak loads.",
+    topic: 'projects-pitch'
+  },
   {
     keywords: ['who', 'name', 'developer', 'author', 'abhinav', 'creator', 'bio', 'version'],
     response: "I am the v3.0 digital avatar of Abhinav Gupta (21). He is a software engineer transitioning from high-precision Frontend to AI & Backend systems. He identifies as an 'Introverted Leader'—leading through architectural competence.",
@@ -138,8 +145,46 @@ const KNOWLEDGE_BASE: KnowledgeEntry[] = [
   }
 ];
 
-const processQuery = (input: string, currentContext?: string): { text: string; action?: () => void; newContext?: string } => {
+const detectIntent = (input: string): UserIntent => {
+  const lower = input.toLowerCase();
+  if (lower.includes('hir') || lower.includes('recruit') || lower.includes('job') || lower.includes('offer') || lower.includes('salary') || lower.includes('business')) return 'recruiter';
+  if (lower.includes('learn') || lower.includes('study') || lower.includes('student') || lower.includes('begin') || lower.includes('how to') || lower.includes('guide')) return 'student';
+  if (lower.includes('judge') || lower.includes('rate') || lower.includes('eval') || lower.includes('critique') || lower.includes('code') || lower.includes('arch') || lower.includes('review')) return 'judge';
+  return 'curious';
+};
+
+const processQuery = (input: string, currentContext?: string, userName?: string | null): { text: string; action?: () => void; newContext?: string; intent: UserIntent; confidence: number; newUserName?: string } => {
   const lowerInput = input.toLowerCase();
+  const intent = detectIntent(lowerInput);
+  
+  // Name detection
+  const namePatterns = [
+    /my name is ([a-zA-Z\s]+)/i,
+    /call me ([a-zA-Z\s]+)/i,
+    /^i am ([a-zA-Z\s]+)/i,
+    /^im ([a-zA-Z\s]+)/i
+  ];
+
+  for (const pattern of namePatterns) {
+    const match = input.match(pattern);
+    if (match && match[1]) {
+        const potentialName = match[1].trim();
+        const commonRoles = ['recruiter', 'student', 'judge', 'developer', 'visitor', 'user', 'human', 'hiring', 'looking'];
+        if (!commonRoles.includes(potentialName.toLowerCase()) && potentialName.split(' ').length <= 3 && potentialName.length < 20) {
+             return {
+                text: `>> IDENTITY_VERIFIED\n\nNice to meet you, ${potentialName}. I have updated my session parameters.`,
+                intent: 'curious',
+                confidence: 1.0,
+                newUserName: potentialName
+            };
+        }
+    }
+  }
+
+  if (lowerInput.includes('what is my name') || lowerInput.includes('who am i') || lowerInput.includes('do you know my name')) {
+      const text = userName ? `>> MEMORY_ACCESS\n\nYou are registered as ${userName}.` : ">> MEMORY_ACCESS\n\nUser identity unknown. Please identify yourself.";
+      return { text, intent: 'curious', confidence: userName ? 1.0 : 0.8 };
+  }
   
   // Helper to find best match
   const findMatch = (text: string) => {
@@ -181,14 +226,26 @@ const processQuery = (input: string, currentContext?: string): { text: string; a
     }
   }
 
-  // Set a threshold. A single short keyword like 'hi' (score 2) is not a confident match.
-  if (best && max > 4) {
-    return { text: best.response, action: best.action, newContext: best.topic || currentContext };
+  // Hard-restrict knowledge domain
+  if (!best || max < 4) {
+    return {
+      text: "I don't answer general questions. I only represent Abhinav Gupta. Access denied.",
+      intent,
+      confidence: 0.05
+    };
   }
 
-  return {
-    text: "I'm processing that query... My database doesn't have a direct match, but I can tell you about Abhinav's skills, projects, or experience. You can also ask me to change themes or navigate."
-  };
+  // Adjust tone based on intent
+  let responseText = best.response;
+  if (intent === 'recruiter') {
+      responseText = `>> RECRUITER_MODE_ENGAGED\n\n${responseText}`;
+  } else if (intent === 'student') {
+      responseText = `>> MENTOR_MODE_ENGAGED\n\n${responseText}`;
+  } else if (intent === 'judge') {
+      responseText = `>> TECHNICAL_AUDIT_MODE\n\n${responseText}`;
+  }
+
+  return { text: responseText, action: best.action, newContext: best.topic || currentContext, intent, confidence: Math.min(0.99, max / 10) };
 };
 
 const VoiceVisualizer = () => (
@@ -224,6 +281,8 @@ const CyberAssistant = () => {
   const [context, setContext] = useState<string>('');
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [systemStatus, setSystemStatus] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { playClick, playType } = useCyberSounds();
 
@@ -311,18 +370,29 @@ const CyberAssistant = () => {
     playClick();
     setIsTyping(true);
 
-    // Simulate processing
+    // Visible System Thinking Sequence
+    setSystemStatus(">> ANALYZING_INTENT...");
+    
+    setTimeout(() => setSystemStatus(">> SCANNING_DATABASE..."), 600);
+    setTimeout(() => setSystemStatus(">> CALCULATING_CONFIDENCE..."), 1200);
+
     setTimeout(() => {
-      const { text, action, newContext } = processQuery(userMsg.text, context);
+      const { text, action, newContext, confidence, newUserName } = processQuery(userMsg.text, context, userName);
       
+      setSystemStatus(`>> CONFIDENCE: ${Math.round(confidence * 100)}%`);
+
+      if (newUserName) setUserName(newUserName);
       if (action) setTimeout(() => action(), 500);
       if (newContext) setContext(newContext);
 
-      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', text }]);
-      speak(text);
-      setIsTyping(false);
-      playType();
-    }, 1000 + Math.random() * 1000);
+      setTimeout(() => {
+        setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', text }]);
+        speak(text);
+        setIsTyping(false);
+        setSystemStatus(null);
+        playType();
+      }, 800);
+    }, 1800);
   };
 
   return (
@@ -342,7 +412,9 @@ const CyberAssistant = () => {
                 {isSpeaking ? (
                   <VoiceVisualizer />
                 ) : (
-                  <span className="font-mono text-sm font-bold text-neon-cyan">AI_ASSISTANT v1.0</span>
+                  <span className="font-mono text-sm font-bold text-neon-cyan">
+                    {systemStatus || "AI_ASSISTANT v3.0"}
+                  </span>
                 )}
               </div>
               <div className="flex items-center gap-3">
