@@ -96,6 +96,7 @@ const FloatingHeader = () => {
   };
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (!href.startsWith('#')) return;
     e.preventDefault();
     setMobileMenuOpen(false);
     if (href === '#') {
@@ -230,6 +231,8 @@ const FloatingHeader = () => {
               key={item.name}
               href={item.href}
               onClick={(e) => scrollToSection(e, item.href)}
+              target={item.href.startsWith('#') ? undefined : "_blank"}
+              rel={item.href.startsWith('#') ? undefined : "noopener noreferrer"}
               className="text-sm font-mono text-muted-foreground hover:text-neon-cyan transition-colors"
             >
               {item.name}
@@ -337,6 +340,8 @@ const FloatingHeader = () => {
                   key={item.name}
                   href={item.href}
                   onClick={(e) => scrollToSection(e, item.href)}
+                  target={item.href.startsWith('#') ? undefined : "_blank"}
+                  rel={item.href.startsWith('#') ? undefined : "noopener noreferrer"}
                   className="block text-lg font-mono text-muted-foreground hover:text-neon-cyan transition-colors py-2"
                 >
                   {item.name}

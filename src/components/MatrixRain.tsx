@@ -40,7 +40,19 @@ const MatrixRain = () => {
     const drops: number[] = new Array(columns).fill(1);
     const chars = '0123456789ABCDEF';
 
-    const draw = () => {
+    let animationFrameId: number;
+    let lastTime = 0;
+    const fps = 30;
+    const interval = 1000 / fps;
+
+    const draw = (currentTime: number) => {
+      animationFrameId = requestAnimationFrame(draw);
+
+      const deltaTime = currentTime - lastTime;
+      if (deltaTime < interval) return;
+
+      lastTime = currentTime - (deltaTime % interval);
+
       // Translucent black background for trail effect
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -60,10 +72,10 @@ const MatrixRain = () => {
       }
     };
 
-    const interval = setInterval(draw, 33);
+    animationFrameId = requestAnimationFrame(draw);
 
     return () => {
-      clearInterval(interval);
+      cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
     };
   }, [isActive]);

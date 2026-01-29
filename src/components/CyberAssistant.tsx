@@ -418,12 +418,35 @@ const CyberAssistant = () => {
             setIsOpen(!isOpen);
             playClick();
         }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="fixed bottom-8 left-4 md:left-8 z-50 w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-neon-cyan/50 text-neon-cyan shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center justify-center group"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed bottom-8 left-4 md:left-8 z-50 w-16 h-16 flex items-center justify-center group"
       >
-        <Bot className="w-6 h-6 group-hover:animate-pulse" />
-        <span className="absolute -top-2 -right-2 w-4 h-4 bg-neon-green rounded-full animate-pulse border-2 border-black" />
+        {/* Rotating Outer Ring */}
+        <motion.div 
+            className="absolute inset-0 rounded-full border border-dashed border-neon-cyan/40"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
+        
+        {/* Counter-Rotating Inner Ring */}
+        <motion.div 
+            className="absolute inset-1 rounded-full border border-dotted border-neon-purple/40"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Core Button */}
+        <div className="absolute inset-2 rounded-full bg-black/80 backdrop-blur-md border border-neon-cyan text-neon-cyan shadow-[0_0_15px_rgba(6,182,212,0.5)] flex items-center justify-center overflow-hidden group-hover:shadow-[0_0_25px_rgba(6,182,212,0.8)] transition-shadow duration-300">
+          <div className="absolute inset-0 bg-gradient-to-tr from-neon-cyan/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Bot className="w-6 h-6 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+        </div>
+
+        {/* Notification Dot */}
+        <span className="absolute top-1 right-1 flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-neon-green border-2 border-black"></span>
+        </span>
       </motion.button>
     </>
   );

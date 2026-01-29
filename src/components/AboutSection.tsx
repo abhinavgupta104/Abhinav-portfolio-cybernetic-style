@@ -229,10 +229,10 @@ const AboutSection = () => {
                 <div className="absolute -inset-1 bg-gradient-to-b from-neon-cyan/20 to-neon-purple/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-700" />
                 <div className="relative border border-white/10 p-2 rounded-2xl bg-black/40 backdrop-blur-sm overflow-hidden">
                   <div className="relative w-full aspect-[4/5]">
-                    {/* Base Image - About Focus */}
+                    {/* Base Image - Default (Portrait) */}
                     <motion.img
-                      src={aboutFocus}
-                      alt="Abhinav Gupta"
+                      src={aboutPortrait}
+                      alt="Abhinav Gupta Portrait"
                       className="absolute inset-0 w-full h-full object-cover rounded-xl"
                       animate={{ opacity: showPortrait ? 0 : 1 }}
                       transition={{ duration: 0.7 }}
@@ -241,10 +241,10 @@ const AboutSection = () => {
                         WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
                       }}
                     />
-                    {/* Portrait Image - Fades in */}
+                    {/* Focus Image - Fades in on click */}
                     <motion.img
-                      src={aboutPortrait}
-                      alt="Abhinav Gupta Portrait"
+                      src={aboutFocus}
+                      alt="Abhinav Gupta Focus"
                       className="absolute inset-0 w-full h-full object-cover rounded-xl"
                       animate={{ opacity: showPortrait ? 1 : 0 }}
                       transition={{ duration: 0.7 }}
@@ -320,8 +320,8 @@ const AboutSection = () => {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan font-mono text-sm uppercase tracking-wider hover:bg-neon-cyan/20 transition-all duration-300 group"
               >
-                <Download className="w-4 h-4 group-hover:animate-bounce" />
-                <span>Download Resume</span>
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <span>View Resume</span>
               </a>
             </motion.div>
 
@@ -490,29 +490,7 @@ const AboutSection = () => {
 
               <div className="space-y-8">
                 {skills.map((skill, index) => (
-                  <motion.div 
-                    key={skill.name} 
-                    className="space-y-2 group cursor-pointer"
-                    whileHover="hover"
-                  >
-                    <div className="flex justify-between text-sm font-mono">
-                      <span className="text-muted-foreground group-hover:text-foreground transition-colors">{skill.name}</span>
-                      <span className={`${skill.text}`}>{skill.level}%</span>
-                    </div>
-                    <div className="h-2 bg-foreground/5 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.level}%` }}
-                        variants={{
-                          hover: { width: `${Math.min(skill.level + 10, 100)}%`, filter: "brightness(1.5)", transition: { duration: 0.3, ease: "easeOut" } }
-                        }}
-                        transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
-                        className={`h-full ${skill.color} shadow-[0_0_10px_currentColor] relative`}
-                      >
-                        <div className="absolute right-0 top-0 bottom-0 w-1 bg-white/50" />
-                      </motion.div>
-                    </div>
-                  </motion.div>
+                  <SkillBar key={skill.name} skill={skill} index={index} />
                 ))}
               </div>
             </motion.div>
@@ -580,5 +558,30 @@ const ChapterBlock = ({ chapter, index }: ChapterProps) => {
     </motion.div>
   );
 };
+
+const SkillBar = ({ skill, index }: { skill: typeof skills[0], index: number }) => (
+  <motion.div 
+    className="space-y-2 group cursor-pointer"
+    whileHover="hover"
+  >
+    <div className="flex justify-between text-sm font-mono">
+      <span className="text-muted-foreground group-hover:text-foreground transition-colors">{skill.name}</span>
+      <span className={`${skill.text}`}>{skill.level}%</span>
+    </div>
+    <div className="h-2 bg-foreground/5 rounded-full overflow-hidden">
+      <motion.div
+        initial={{ width: 0 }}
+        whileInView={{ width: `${skill.level}%` }}
+        variants={{
+          hover: { width: `${Math.min(skill.level + 10, 100)}%`, filter: "brightness(1.5)", transition: { duration: 0.3, ease: "easeOut" } }
+        }}
+        transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
+        className={`h-full ${skill.color} shadow-[0_0_10px_currentColor] relative`}
+      >
+        <div className="absolute right-0 top-0 bottom-0 w-1 bg-white/50" />
+      </motion.div>
+    </div>
+  </motion.div>
+);
 
 export default AboutSection;
