@@ -109,7 +109,8 @@ const NeuralUplink = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="bg-black/80 backdrop-blur-md border border-neon-cyan/30 px-4 py-2 rounded-lg text-neon-cyan font-mono text-sm"
+            onClick={stopListening}
+            className="bg-black/80 backdrop-blur-md border border-neon-cyan/30 px-4 py-2 rounded-lg text-neon-cyan font-mono text-sm cursor-pointer hover:bg-neon-cyan/10 transition-colors"
           >
             {transcript || "Listening..."}
           </motion.div>
