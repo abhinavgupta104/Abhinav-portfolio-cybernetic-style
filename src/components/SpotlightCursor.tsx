@@ -57,8 +57,8 @@ const SpotlightCursor = () => {
       let targetX = e.clientX;
       let targetY = e.clientY;
 
-      // Strong Magnetic Effect
-      if (hoveredElementRef.current) {
+      // Strong Magnetic Effect - FIXED: Added null check
+      if (hoveredElementRef.current && hoveredElementRef.current.getBoundingClientRect) {
         const rect = hoveredElementRef.current.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
@@ -90,12 +90,19 @@ const SpotlightCursor = () => {
         target.closest('[role="button"]') ||
         target.closest('.cursor-pointer');
       
-      if (clickable) {
+      // FIXED: Added proper type checking and null safety
+      if (clickable && clickable instanceof HTMLElement) {
         setIsHovering(true);
         if (hoveredElementRef.current !== clickable) {
-          hoveredElementRef.current = clickable as HTMLElement;
-          const rect = clickable.getBoundingClientRect();
-          setHoveredRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+          hoveredElementRef.current = clickable;
+          // FIXED: Added try-catch for getBoundingClientRect
+          try {
+            const rect = clickable.getBoundingClientRect();
+            setHoveredRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+          } catch (error) {
+            console.warn('Failed to get bounding rect:', error);
+            setHoveredRect(null);
+          }
         }
       } else {
         setIsHovering(false);
