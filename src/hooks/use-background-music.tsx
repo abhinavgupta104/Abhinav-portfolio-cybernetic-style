@@ -13,7 +13,8 @@ export const useBackgroundMusic = () => {
   const oscillatorsRef = useRef<OscillatorNode[]>([]);
 
   useEffect(() => {
-    const audio = new Audio('/homelander-theme.mp3');
+    // CHANGED: Updated to use .mp3 extension
+    const audio = new Audio('/background-music.mp3');
     audio.loop = true;
     audio.volume = volume;
     
@@ -39,7 +40,7 @@ export const useBackgroundMusic = () => {
       if (AudioContextClass) {
         audioContextRef.current = new AudioContextClass();
         const gainNode = audioContextRef.current.createGain();
-        gainNode.gain.value = volume * 0.1; // Synth is louder, scale down
+        gainNode.gain.value = volume * 0.1;
         gainNode.connect(audioContextRef.current.destination);
         gainNodeRef.current = gainNode;
       }
